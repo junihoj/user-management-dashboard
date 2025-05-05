@@ -1,7 +1,7 @@
 import React from "react";
 
 const AuthLayout = ({ children }: React.PropsWithChildren) => {
-  return <React.Fragment>{children}</React.Fragment>;
+  return <div className="w-dvw h-dvh mx-auto">{children}</div>;
 };
 
 export default AuthLayout;
