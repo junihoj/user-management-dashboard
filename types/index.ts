@@ -9,3 +9,10 @@ export type TApiServiceConfig = {
   otherConfig?: AxiosRequestConfig;
 };
 export type TApiService = (config: TApiServiceConfig) => Promise<any>;
+
+export type TRole = "user" | "admin";
+
+export type TAuthTokens = {
+  accessToken?: string;
+  refreshToken?: string;
+};

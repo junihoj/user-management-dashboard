@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
-
-// 1. Define the interface for the User document
+import bcrypt from "bcryptjs";
+// interface for the User
 export interface IUser {
   name: string;
   email: string;
@@ -11,9 +11,14 @@ export interface IUser {
   updatedAt: Date;
 }
 
-export interface IUserDocument extends IUser, Document {}
+export interface IUserMethods {
+  comparePassword: (password: string) => Promise<boolean>;
+}
 
-// 2. Define the schema
+//define interface for the user document
+export interface IUserDocument extends IUser, Document, IUserMethods {}
+
+//  Schema definition
 const UserSchema: Schema<IUserDocument> = new Schema({
   name: {
     type: String,
@@ -57,10 +62,16 @@ UserSchema.pre<IUserDocument>("save", function (next) {
   next();
 });
 
-// 4. Define the model type
+UserSchema.methods.comparePassword = async function (
+  enteredPassword: string
+): Promise<boolean> {
+  return bcrypt.compare(enteredPassword, this.password);
+};
+
+// Define the model type
 interface IUserModel extends Model<IUserDocument> {}
 
-// // 5. Export the model
+// Export the model
 // const User: IUserModel =
 //   (mongoose.models.User as IUserModel) ||
 //   mongoose.model<IUser, IUserModel>("User", UserSchema);
