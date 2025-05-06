@@ -1,6 +1,7 @@
 "use client";
 
 import { CustomField } from "@/components/globals/custom-field";
+import { ProgressBarLink } from "@/components/globals/progress-bar-link";
 import ErrorText from "@/components/typograhpy/error-text";
 import { Button } from "@/components/ui/button";
 import CustomInput from "@/components/ui/custom-input";
@@ -75,6 +76,8 @@ const LoginForm = () => {
               className="flex-1 w-full"
               control={form.control}
               name="email"
+              formLabel="Email"
+              labelClass="text-gray-800"
               render={({ field }) => (
                 <CustomInput
                   {...field}
@@ -87,33 +90,45 @@ const LoginForm = () => {
               )}
               schema={LoginFormSchema}
             />
-            <CustomField
-              className="flex-1"
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <CustomInput
-                  {...field}
-                  error={form.formState.errors.password}
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Password"
-                />
-              )}
-              icon={
-                showPassword ? (
-                  <EyeClosed
-                    onClick={togglePasswordVisibility}
-                    className={`${authInputIconClassName}`}
+            <div>
+              <CustomField
+                className="flex-1"
+                control={form.control}
+                name="password"
+                formLabel="Password"
+                render={({ field }) => (
+                  <CustomInput
+                    {...field}
+                    error={form.formState.errors.password}
+                    type={showPassword ? "text" : "password"}
+                    placeholder="enter password"
                   />
-                ) : (
-                  <Eye
-                    onClick={togglePasswordVisibility}
-                    className={`${authInputIconClassName}`}
-                  />
-                )
-              }
-              schema={LoginFormSchema}
-            />
+                )}
+                iconClassName="cursor-pointer"
+                icon={
+                  showPassword ? (
+                    <EyeClosed
+                      onClick={togglePasswordVisibility}
+                      className={`${authInputIconClassName}`}
+                    />
+                  ) : (
+                    <Eye
+                      onClick={togglePasswordVisibility}
+                      className={`${authInputIconClassName}`}
+                    />
+                  )
+                }
+                schema={LoginFormSchema}
+              />
+              <div className="flex justify-end">
+                <ProgressBarLink
+                  href={`/auth/forgot-password`}
+                  className="font-semibold text-golden-solid text-[0.8125rem] leading-[1.375rem] cursor-pointer"
+                >
+                  create New Account
+                </ProgressBarLink>
+              </div>
+            </div>
             {errorMessage && <ErrorText message={errorMessage} />}
           </div>
 

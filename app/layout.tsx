@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import TanstackQueryProvider from "@/providers/tanstack-query-provider";
+import { ProgressBarProvider } from "@/providers/progress-bar-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,7 +29,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <TanstackQueryProvider>
+          <ProgressBarProvider className="fixed top-0 z-[1400] h-1 bg-golden-solid">
+            {children}
+          </ProgressBarProvider>
+        </TanstackQueryProvider>
       </body>
     </html>
   );

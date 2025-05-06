@@ -1,9 +1,11 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 import bcrypt from "bcryptjs";
+import { UserRoleEnum, UserStatusEnum } from "@/constants/enums";
 // interface for the User
 export interface IUser {
   name: string;
   email: string;
+  password: string;
   role: "admin" | "user";
   status: "active" | "inactive";
   profilePhoto?: string;
@@ -32,15 +34,20 @@ const UserSchema: Schema<IUserDocument> = new Schema({
     trim: true,
     lowercase: true,
   },
+  password: {
+    type: String,
+    required: false,
+    select: false,
+  },
   role: {
     type: String,
-    enum: ["admin", "user"],
-    default: "user",
+    enum: Object.values(UserRoleEnum),
+    default: UserRoleEnum.User,
   },
   status: {
     type: String,
-    enum: ["active", "inactive"],
-    default: "active",
+    enum: Object.values(UserStatusEnum),
+    default: UserStatusEnum.Active,
   },
   profilePhoto: {
     type: String,
@@ -65,6 +72,9 @@ UserSchema.pre<IUserDocument>("save", function (next) {
 UserSchema.methods.comparePassword = async function (
   enteredPassword: string
 ): Promise<boolean> {
+  if (!this.password) {
+    return false;
+  }
   return bcrypt.compare(enteredPassword, this.password);
 };
 

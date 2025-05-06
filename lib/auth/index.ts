@@ -1,4 +1,4 @@
-// lib/auth.js
+"use server";
 import { TAuthTokens, TRole } from "@/types";
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";

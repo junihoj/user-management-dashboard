@@ -17,7 +17,7 @@ interface MongooseCache {
 declare global {
   var mongoose: MongooseCache;
 }
-const MONGODB_URI = process.env.MONGODB_URI;
+const MONGODB_URI = process.env.DATABASE_URL;
 
 if (!MONGODB_URI) {
   throw new Error("Please define the MONGODB_URI environment variable");
@@ -40,7 +40,10 @@ async function dbConnect() {
         // useNewUrlParser: true,
         // useUnifiedTopology: true,
       })
-      .then((mongoose) => mongoose);
+      .then((mongoose) => {
+        console.log("CONNECTED TO DATABASE");
+        return mongoose;
+      });
   }
   cached.conn = await cached.promise;
   return cached.conn;
