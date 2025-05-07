@@ -1,0 +1,36 @@
+name: CI - Build & Test
+
+# Trigger the workflow on pushes to dev and pull requests targeting main
+on:
+  push:
+    branches:
+      - onyeka
+      - auth
+  pull_request:
+    branches:
+      - main
+      - dev
+      - test
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Check out the repository code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set up Node.js environment
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+
+      # Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Build the project
+      - name: Build project
+        run: npm run build
