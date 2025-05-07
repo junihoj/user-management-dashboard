@@ -8,7 +8,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { XIcon } from "lucide-react";
+import { PencilIcon, XIcon } from "lucide-react";
 import UserForm from "./user-form";
 
 import { cn } from "@/lib/utils";
@@ -29,21 +29,25 @@ const UserFormModal = ({ data, className, buttonText }: Props) => {
           e.preventDefault();
           setOpen(true);
         }}
-        className={cn("cursor-pointer", className)}
+        className={cn("cursor-pointer items-center", className)}
       >
-        <Button
-          className="bodyText-regular max-[600px]:text-xs max-[600px]:p-2"
-          variant="fill"
-        >
-          {buttonText ?? "Add an account"}
-        </Button>
+        {data?._id ? (
+          <PencilIcon />
+        ) : (
+          <Button
+            className="bodyText-regular max-[600px]:text-xs max-[600px]:p-2"
+            variant="fill"
+          >
+            {buttonText ?? "Add an account"}
+          </Button>
+        )}
       </DialogTrigger>
 
       <DialogContent
         showClose={false}
         className="py-4 px-0 max-h-[90dvh] h-[90dvh] overflow-hidden"
       >
-        <DialogTitle className="sr-only">create account modal</DialogTitle>
+        <DialogTitle className="sr-only">create User modal</DialogTitle>
         <div className="flex flex-col gap-y-2 h-full overflow-hidden bg-system-background">
           <header className="flex flex-col gap-y-4 py-6 bg-white px-8">
             <h1 className="bodyText-Bold text-black">Add an account holder</h1>
@@ -51,14 +55,7 @@ const UserFormModal = ({ data, className, buttonText }: Props) => {
               Fill the details below in order to add an account holder.
             </p>
           </header>
-          <UserForm
-            setOpen={setOpen}
-            avatar={data?.avatar}
-            firstName={data?.firstName}
-            lastName={data?.lastName}
-            occupation={data?.occupation}
-            id={data?.id}
-          />
+          <UserForm setOpen={setOpen} data={data} id={data?.id} />
         </div>
         <DialogClose
           onClick={(e) => {

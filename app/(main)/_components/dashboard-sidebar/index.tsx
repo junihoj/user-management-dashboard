@@ -1,8 +1,18 @@
+import { cn } from "@/lib/utils";
 import React from "react";
 
 const DashboardSidebar = () => {
   return (
-    <aside className="max-[800px]:hidden min-w-[10dvw] flex flex-col px-2 py-8 w-fit max-h-dvh border-r border-[rgba(234,236,240,1)] justify-between"></aside>
+    <aside
+      className={cn(
+        "flex flex-col justify-between",
+        "max-[800px]:hidden min-w-[10dvw] w-fit max-h-dvh",
+        "py-8 rounded-2xl"
+      )}
+    >
+      <div className="bg-gray-200 h-10 "></div>
+      <div className="flex-1 bg-white rounded-2xl"></div>
+    </aside>
   );
 };
 

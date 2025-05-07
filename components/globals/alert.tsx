@@ -8,8 +8,8 @@ type Props = {
 export const AlertError = ({ message }: Props) => {
   return (
     <div className="bg-system-alert flex gap-x-2 w-full h-full">
-      <CircleAlert className="w-5 h-5 stroke-system-error-main" />
-      <p className="text-system-alert-text rounded font-normal font-raleway text-base">
+      <CircleAlert className="w-5 h-5 stroke-error" />
+      <p className="text-error rounded font-normal font-raleway text-base">
         {message}
       </p>
     </div>

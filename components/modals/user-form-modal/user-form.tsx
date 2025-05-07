@@ -12,13 +12,16 @@ import { toast } from "sonner";
 import Image from "next/image";
 import { useQueryClient } from "@tanstack/react-query";
 import CustomInput from "@/components/ui/custom-input";
+import Row from "@/components/globals/row";
+import { createUserFormSchema } from "@/lib/validation/user.validation";
+import { UserRoleEnum, UserStatusEnum } from "@/constants/enums";
 
-const AccountFormSchema = z.object({
-  firstName: z.string().min(1, "First Name is required"),
-  lastName: z.string().min(1, "Last Name is required"),
-  occupation: z.string(),
-  avatar: z.string().optional(),
-});
+// const createUserFormSchema = z.object({
+//   firstName: z.string().min(1, "First Name is required"),
+//   lastName: z.string().min(1, "Last Name is required"),
+//   occupation: z.string(),
+//   avatar: z.string().optional(),
+// });
 
 const occupationSelectItems: {
   label: string;
@@ -31,36 +34,43 @@ const occupationSelectItems: {
   { label: "others", value: "OTHER" },
 ];
 
+const userRoleSelectItem: {
+  label: string;
+  value: UserRoleEnum;
+}[] = [
+  { label: "Admin", value: UserRoleEnum.Admin },
+  { label: "User", value: UserRoleEnum.User },
+];
+const userStatusSelectItem: {
+  label: string;
+  value: UserStatusEnum;
+}[] = [
+  { label: "Active", value: UserStatusEnum.Active },
+  { label: "Inactive", value: UserStatusEnum.InActive },
+];
+
 type Props = {
-  firstName?: string;
-  lastName?: string;
-  occupation?: string;
-  avatar?: string;
+  // firstName?: string;
+  // lastName?: string;
+  // occupation?: string;
+  // avatar?: string;
+  data?: any;
   setOpen: (val: boolean) => void;
   id?: string;
 };
 
-const UserForm = ({
-  firstName,
-  lastName,
-  avatar,
-  occupation,
-  setOpen,
-  id,
-}: Props) => {
+const UserForm = ({ data, setOpen, id }: Props) => {
   const [preview, setPreview] = useState("");
   const queryClient = useQueryClient();
-  const form = useForm<z.infer<typeof AccountFormSchema>>({
-    resolver: zodResolver(AccountFormSchema),
+  const form = useForm<z.infer<typeof createUserFormSchema>>({
+    resolver: zodResolver(createUserFormSchema),
     defaultValues: {
-      firstName,
-      lastName,
-      avatar: avatar ?? "",
-      occupation,
+      firstName: data?.name.split(" ")[0] || "",
+      lastName: data?.name.split(" ")[0] || "",
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof AccountFormSchema>) => {
+  const onSubmit = async (values: z.infer<typeof createUserFormSchema>) => {
     try {
       console.log("id here", id);
       if (id) {
@@ -68,7 +78,7 @@ const UserForm = ({
         await apiService({
           url: `/accounts/${id}`,
           method: "put",
-          data: { ...values, avatar: avatar ?? "" },
+          data: { ...values, avatar: data?.profilePhoto ?? "" },
         });
       } else {
         await apiService({
@@ -78,14 +88,23 @@ const UserForm = ({
         });
       }
 
-      form.reset({ avatar: "", firstName: "", lastName: "", occupation: "" });
+      form.reset({
+        profilePhoto: "",
+        firstName: "",
+        lastName: "",
+        email: "",
+        name: "",
+        password: "",
+        role: undefined,
+        status: undefined,
+      });
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
 
       setOpen(false);
     } catch (err) {}
   };
 
-  const watchedField = form.watch(["firstName", "lastName", "occupation"]);
+  const watchedField = form.watch(["firstName", "lastName", "email"]);
   // console.log(form.formState.errors);
   const isDisabled = () => {
     return watchedField.some((field) => field == undefined || field == "");
@@ -97,10 +116,10 @@ const UserForm = ({
         className="flex flex-col bg-white gap-y-10 overflow-y-auto px-8 py-6"
       >
         {/* <CustomToast id="id" message="" success={false} /> */}
-        {preview || avatar ? (
+        {preview || data?.profilePhoto ? (
           <div className="flex justify-center relative">
             <Image
-              src={preview != "" ? preview : (avatar as string)}
+              src={preview != "" ? preview : (data?.profilePhoto as string)}
               alt="preview"
               width={100}
               height={100}
@@ -122,58 +141,101 @@ const UserForm = ({
           <div>pics here</div>
         )}
         <div className="flex flex-col gap-y-4">
+          <Row>
+            <CustomField
+              className="flex-1 w-full"
+              control={form.control}
+              name="firstName"
+              formLabel="First Name"
+              render={({ field }) => (
+                <CustomInput
+                  className=""
+                  {...field}
+                  placeholder="Enter first name"
+                />
+              )}
+              schema={createUserFormSchema}
+            />
+            <CustomField
+              className="flex-1 w-full"
+              control={form.control}
+              name="lastName"
+              formLabel="Last Name"
+              render={({ field }) => (
+                <CustomInput
+                  className=""
+                  {...field}
+                  placeholder="Enter last name"
+                />
+              )}
+              schema={createUserFormSchema}
+            />
+          </Row>
           <CustomField
             className="flex-1 w-full"
             control={form.control}
-            name="firstName"
-            formLabel="First Name"
+            name="email"
+            formLabel="Email"
             render={({ field }) => (
               <CustomInput
                 className=""
                 {...field}
-                placeholder="Enter first name"
+                placeholder="email@domain.com"
               />
             )}
-            schema={AccountFormSchema}
+            schema={createUserFormSchema}
           />
-          <CustomField
-            className="flex-1 w-full"
-            control={form.control}
-            name="lastName"
-            formLabel="Last Name"
-            render={({ field }) => (
-              <CustomInput
-                className=""
-                {...field}
-                placeholder="Enter last name"
-              />
-            )}
-            schema={AccountFormSchema}
-          />
-          <CustomField
-            className="flex-1 w-full"
-            control={form.control}
-            name="occupation"
-            formLabel="Occupation"
-            render={({ field }) => (
-              <CustomSelect
-                selectItems={occupationSelectItems}
-                value={field.value}
-                onValueChange={field.onChange}
-                placeholder="Select Occupation"
-              />
-            )}
-            schema={AccountFormSchema}
-          />
+          <Row>
+            <CustomField
+              className="flex-1 w-full"
+              control={form.control}
+              name="role"
+              formLabel="User Role"
+              render={({ field }) => (
+                <CustomSelect
+                  selectItems={userRoleSelectItem}
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  placeholder="Select Occupation"
+                />
+              )}
+              schema={createUserFormSchema}
+            />
+            <CustomField
+              className="flex-1 w-full"
+              control={form.control}
+              name="status"
+              formLabel="Active Status"
+              render={({ field }) => (
+                <CustomSelect
+                  selectItems={userStatusSelectItem}
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  placeholder="Select Occupation"
+                />
+              )}
+              schema={createUserFormSchema}
+            />
+          </Row>
         </div>
-        <Button
-          className="py-[17.5px] bodyText-regular text-base"
-          variant="fill"
-          disabled={isDisabled()}
-          type="submit"
-        >
-          Save
-        </Button>
+        <div className="flex gap-x-10">
+          <Button
+            variant="outline"
+            className="flex-1"
+            type="button"
+            onClick={() => setOpen(false)}
+          >
+            Cancel
+          </Button>
+          <Button
+            className="flex-1 py-[17.5px] bodyText-regular text-base"
+            variant="fill"
+            disabled={isDisabled()}
+            type="submit"
+          >
+            Save
+          </Button>
+        </div>
       </form>
     </Form>
   );

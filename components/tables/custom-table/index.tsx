@@ -45,10 +45,7 @@ const CustomTable = <TData, TValue>({
             <TableRow key={headerGroup.id} className="border-none ">
               {headerGroup.headers.map((header) => {
                 return (
-                  <TableHead
-                    key={header.id}
-                    className="first:rounded-l-xl last:rounded-r-xl"
-                  >
+                  <TableHead key={header.id} className="last:rounded-r-xl">
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -72,7 +69,7 @@ const CustomTable = <TData, TValue>({
                 {row.getVisibleCells().map((cell) => (
                   <TableCell
                     key={cell.id}
-                    className="py-4 text-primary-black font-normal text-sm max-[500px]:py-2 max-[500px]:text-xs"
+                    className="py-3 text-primary-black font-normal text-sm max-[500px]:py-2 max-[500px]:text-xs"
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>

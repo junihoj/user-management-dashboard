@@ -1,3 +1,4 @@
+import { UserRoleEnum, UserStatusEnum } from "@/constants/enums";
 import { AxiosRequestConfig, Method } from "axios";
 
 export type TApiServiceConfig = {
@@ -15,4 +16,13 @@ export type TRole = "user" | "admin";
 export type TAuthTokens = {
   accessToken?: string;
   refreshToken?: string;
+};
+
+export type TUser = {
+  _id: string;
+  name: string;
+  email: string;
+  role: UserRoleEnum;
+  status: UserStatusEnum;
+  profilePhoto?: string;
 };

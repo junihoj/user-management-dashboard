@@ -1,27 +1,28 @@
 "use server";
 
-import { UserModel } from "@/models/user.model";
+import { UserModel } from "@/lib/db/models/user.model";
 import { TLoginRequest } from "@/types/requests";
-import { CustomError } from "../utils/error";
 import { generateTokens, setTokenCookies } from "../auth";
+import { CustomError } from "../utils/error";
 
-const login = async ({ email, password }: TLoginRequest) => {
+export const login = async ({ email, password }: TLoginRequest) => {
   // Validate credentials
+
   const user = await UserModel.findOne({ email });
-  if (!user || !(await user.comparePassword(password))) {
+
+  if (!user) {
     throw new CustomError("Invalid credentials provided", { statusCode: 400 });
   }
 
+  // const isValidPassword = await bcrypt.compare(password, user.password);
+  const isValidPassword = await user.comparePassword(password);
+  if (!isValidPassword) {
+    throw new CustomError("Invalid Credentials Provided", { statusCode: 400 });
+  }
   // Generate tokens
-  const { accessToken, refreshToken } = await generateTokens(
-    user._id as string,
-    user.role
-  );
+  const { accessToken } = await generateTokens(user._id as string);
 
   // Set cookies
-  await setTokenCookies({ accessToken, refreshToken });
-  //   return NextResponse.json(
-  //     { success: true, user: { id: user._id, role: user.role } },
-  //     { status: 200 }
-  //   );
+  await setTokenCookies({ accessToken });
+  return user;
 };

@@ -4,6 +4,7 @@ import { verifyAccessToken } from "@/lib/auth";
 import { cookies } from "next/headers";
 import DashboardSidebar from "./_components/dashboard-sidebar";
 import DashboardTopBar from "./_components/dashboard-topbar";
+import { cn } from "@/lib/utils";
 
 const MainLayout = async ({ children }: React.PropsWithChildren) => {
   // const cookieStore = await cookies();
@@ -20,7 +21,11 @@ const MainLayout = async ({ children }: React.PropsWithChildren) => {
   // }
   return (
     <div className="w-dvw h-dvh overflow-hidden">
-      <div className="flex w-full overflow-hidden">
+      <div
+        className={cn(
+          "flex gap-x-8 w-full overflow-hidden px-8 bg-gray-200 h-full"
+        )}
+      >
         {/* sidenav */}
         <DashboardSidebar />
         {/* main content */}

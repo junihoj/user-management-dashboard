@@ -1,5 +1,5 @@
 import NotificationBellIcon from "@public/assets/icons/notification-bell.svg";
-import { Menu } from "lucide-react";
+import { Bell, Menu } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import Link from "next/link";
 
@@ -21,7 +21,7 @@ const NotificationPopover = () => {
   return (
     <Popover>
       <PopoverTrigger asChild className="cursor-pointer">
-        <NotificationBellIcon />
+        <Bell />
       </PopoverTrigger>
       <PopoverContent className="w-80 p-0">
         {/* heading */}

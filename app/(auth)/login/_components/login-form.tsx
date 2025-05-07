@@ -29,7 +29,7 @@ const LoginForm = () => {
   const signInReq = useMutation({
     mutationFn: async (data: any) => {
       return apiService({
-        url: "/api/v1/auth/login",
+        url: "/auth/login",
         data,
         method: "post",
         // otherConfig: { withCredentials: true },
@@ -45,7 +45,7 @@ const LoginForm = () => {
       router.replace(nextUrl || "/");
     },
     onError(error: Error | AxiosError, _variables, _context) {
-      handleError(error);
+      handleError(error, setErrorMessage);
     },
   });
   const [errorMessage, setErrorMessage] = useState("");
@@ -59,6 +59,7 @@ const LoginForm = () => {
     },
   });
   const onSubmit = (values: z.infer<typeof LoginFormSchema>) => {
+    setErrorMessage("");
     signInReq.mutate({ ...values });
   };
   const togglePasswordVisibility = () => setShowPassword(!showPassword);

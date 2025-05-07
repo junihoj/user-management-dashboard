@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import TanstackQueryProvider from "@/providers/tanstack-query-provider";
 import { ProgressBarProvider } from "@/providers/progress-bar-provider";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,6 +35,7 @@ export default function RootLayout({
             {children}
           </ProgressBarProvider>
         </TanstackQueryProvider>
+        <Toaster position="bottom-center" />
       </body>
     </html>
   );

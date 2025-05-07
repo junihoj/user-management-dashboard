@@ -58,15 +58,3 @@ export class BadRequestError extends CustomError {
 }
 
 // ERROR HANDLING FUNCTION
-
-export const handleServerError = (err: Error) => {
-  if (err instanceof CustomError) {
-    return NextResponse.json(
-      {
-        success: false,
-        message: err.message,
-      },
-      { status: err.statusCode || 400 }
-    );
-  }
-};

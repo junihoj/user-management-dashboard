@@ -10,7 +10,7 @@ interface DataTableProps<TData, TValue> {
   metaData?: unknown;
 }
 
-const DashboardTable = <TData, TValue>({
+const UsersTable = <TData, TValue>({
   columns,
   data,
   metaData,
@@ -18,4 +18,4 @@ const DashboardTable = <TData, TValue>({
   return <CustomTable columns={columns} data={data} metaData={metaData} />;
 };
 
-export default DashboardTable;
+export default UsersTable;

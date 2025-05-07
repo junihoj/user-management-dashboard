@@ -1,10 +1,27 @@
 import axios from "axios";
+// import { cookies } from "next/headers";
 import { apiUrl } from "@/constants";
 import { TApiService } from "@/types";
 
 const globalAxios = axios.create({
   baseURL: apiUrl,
 });
+
+globalAxios.interceptors.request.use(
+  async (config) => {
+    // const cookieStore = await cookies();
+    // const accessToken = cookieStore.get("accessToken")?.value;
+
+    // if (accessToken) {
+    //   config.headers.Authorization = `Bearer ${accessToken}`;
+    // }
+
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 // Add a response interceptor
 globalAxios.interceptors.response.use(
