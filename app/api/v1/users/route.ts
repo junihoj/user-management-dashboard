@@ -1,5 +1,6 @@
 import { handleServerError } from "@/lib/actions/error.action";
 import { createUser, getUsers } from "@/lib/actions/user.actions";
+import { getSession } from "@/lib/auth";
 import dbConnect from "@/lib/db";
 import { createUserSchema } from "@/lib/validation/user.validation";
 import { NextResponse } from "next/server";
@@ -27,13 +28,21 @@ export async function POST(request: Request) {
 
 export async function GET(request: NextRequest) {
   try {
+    await getSession();
     const searchParams = request.nextUrl.searchParams;
     const page = searchParams.get("page");
     const limit = searchParams.get("limit");
+    const searchQuery = searchParams.get("q") || "";
+    const roleFilter = searchParams.get("role") || "";
+    const statusFilter = searchParams.get("status") || "";
 
+    
     const users = await getUsers({
       limit: parseInt(limit as string),
       page: parseInt(page as string),
+      searchQuery,
+      roleFilter,
+      statusFilter,
     });
 
     return NextResponse.json(

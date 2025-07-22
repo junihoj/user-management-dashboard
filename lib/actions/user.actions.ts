@@ -29,18 +29,47 @@ export const createUser = async (createUserDto: TCreateUserRequest) => {
 export const getUsers = async ({
   page,
   limit,
+  roleFilter,
+  searchQuery,
+  statusFilter,
 }: {
   page: number;
   limit: number;
+  searchQuery: string;
+  roleFilter: string;
+  statusFilter: string;
 }) => {
   const skip = (page - 1) * limit;
-  const users = await UserModel.find({})
-    .skip(skip)
-    .limit(limit)
-    .sort({ createdAt: -1 })
-    .select("-password");
+  // Base query conditions
+  const query: any = {};
+  // // Non-admins can only see their own data
+  // if (session.role !== "admin") {
+  //   query._id = session.userId;
+  // }
 
-  const total = await UserModel.countDocuments();
+  // Apply text search if provided
+  if (searchQuery) {
+    query.$text = { $search: searchQuery };
+  }
+
+  // Apply role filter if provided
+  if (roleFilter) {
+    query.role = roleFilter;
+  }
+
+  // Apply status filter if provided
+  if (statusFilter) {
+    query.status = statusFilter;
+  }
+  const [users, total] = await Promise.all([
+    await UserModel.find(query)
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 })
+      .select("-password"),
+    UserModel.countDocuments(query),
+  ]);
+
   return {
     data: users,
     pagination: {
@@ -56,6 +85,7 @@ export const deleteUser = async (id: string) => {
   if (!deleted) {
     throw new NotFoundError("User not found");
   }
+
 };
 
 export const updateUser = async (id: string, update: any) => {
@@ -69,4 +99,3 @@ export const updateUser = async (id: string, update: any) => {
   return updatedUser;
 };
 
-export const searchUser = async () => {};

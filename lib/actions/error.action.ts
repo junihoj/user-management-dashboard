@@ -46,6 +46,15 @@ export const handleServerError = async (err: any) => {
       { status: 400 }
     );
   }
+  if (err?.name && err?.name == "TokenExpiredError") {
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Unauthorized",
+      },
+      { status: 401 }
+    );
+  }
   return NextResponse.json(
     {
       success: false,

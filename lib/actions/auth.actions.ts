@@ -20,7 +20,7 @@ export const login = async ({ email, password }: TLoginRequest) => {
     throw new CustomError("Invalid Credentials Provided", { statusCode: 400 });
   }
   // Generate tokens
-  const { accessToken } = await generateTokens(user._id as string);
+  const { accessToken } = await generateTokens(user._id as string, user.role);
 
   // Set cookies
   await setTokenCookies({ accessToken });

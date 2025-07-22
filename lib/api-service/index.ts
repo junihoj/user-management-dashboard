@@ -39,12 +39,12 @@ globalAxios.interceptors.response.use(
       // searchParams.delete("next"); // Remove "next" if it exists
       if (searchParams.get("next")) {
         const nextParam = searchParams.get("next");
-        window.location.href = `/auth/sign-in?next=${nextParam}`;
+        window.location.href = `/auth/login?next=${nextParam}`;
         // const newPath =
         //   decoded.split("?")[0] +
         //   (searchParams.toString() ? `?${searchParams.toString()}` : "");
       } else {
-        window.location.href = `/auth/sign-in?${searchParams.toString()}`;
+        window.location.href = `/auth/login?${searchParams.toString()}`;
       }
     }
 

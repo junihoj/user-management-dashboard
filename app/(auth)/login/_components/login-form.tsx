@@ -38,9 +38,7 @@ const LoginForm = () => {
     onSuccess(res: AxiosResponse, _variables, _context) {
       const nextUrl = searchParams.get("next");
       if (res?.data?.success) {
-        Alert.success(
-          res?.data?.data?.message || "Profile Updated Successfully"
-        );
+        Alert.success(res?.data?.data?.message || "Logged In Successfully");
       }
       router.replace(nextUrl || "/");
     },

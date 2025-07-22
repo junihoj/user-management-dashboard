@@ -2,6 +2,8 @@
 import { TAuthTokens, TRole } from "@/types";
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
+import { UnauthorizedError } from "../utils/error";
+import { redirect } from "next/navigation";
 
 const JWT_SECRET = process.env.ACCESS_TOKEN_SECRET as string;
 // const REFRESH_SECRET = process.env.REFRESH_TOKEN_SECRET as string;
@@ -10,8 +12,8 @@ const ACCESS_TOKEN_EXPIRY =
 // const REFRESH_TOKEN_EXPIRY =
 //   (process.env.REFRESH_TOKEN_EXPIRY as string) || "7d";
 
-export const generateTokens = async (userId: string) => {
-  const accessToken = jwt.sign({ userId }, JWT_SECRET, {
+export const generateTokens = async (userId: string, role: string) => {
+  const accessToken = jwt.sign({ userId, role }, JWT_SECRET, {
     expiresIn: ACCESS_TOKEN_EXPIRY,
   });
 
@@ -22,10 +24,17 @@ export const generateTokens = async (userId: string) => {
   return { accessToken };
 };
 
-export const verifyAccessToken = async (token: string) => {
+export const verifyAccessToken = async (
+  token: string,
+  throwError: boolean = false
+) => {
   try {
     return jwt.verify(token, JWT_SECRET);
   } catch (error) {
+    if (throwError) {
+      throw error;
+    }
+    // console.log("VERIFY TOKEN ERROR", error);
     return null;
   }
 };
@@ -64,19 +73,48 @@ export const clearTokenCookies = async () => {
   cookieStore.delete("refreshToken");
 };
 
-// export const authenticate =  async (req:Request) => {
-//   const token = req.;
+export const isAuthenticated = async () => {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+  if (!token) {
+    throw new UnauthorizedError("Unauthorized");
+  }
+  const decoded = await verifyAccessToken(token);
+  if (!decoded) {
+    throw new UnauthorizedError("Unauthorized");
+  }
+  return decoded;
+};
 
-//   if (!token) {
-//     return res.status(401).json({ error: "Unauthorized" });
-//   }
+export const getSession = async () => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("token")?.value;
+  if (!accessToken) return null;
 
-//   const decoded = verifyToken(token);
+  const decoded = await verifyAccessToken(accessToken);
+  if (!decoded) return null;
 
-//   if (!decoded) {
-//     return res.status(401).json({ error: "Invalid token" });
-//   }
+  return decoded as any;
+};
 
-//   req.userId = decoded.userId;
-//   return handler(req, res);
-// };
+export const protectRoute = async (allowedRoles: string[] = []) => {
+  const session = await getSession();
+
+  if (!session) {
+    redirect("/login");
+  }
+
+  if (allowedRoles.length > 0 && !allowedRoles.includes(session.role)) {
+    redirect("/dashboard?error=unauthorized");
+  }
+
+  return session;
+};
+
+export const redirectIfAuthenticated = async () => {
+  const session = await getSession();
+
+  if (session) {
+    redirect("/dashboard");
+  }
+};

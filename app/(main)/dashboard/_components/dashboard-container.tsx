@@ -18,7 +18,14 @@ const DashboardContainer = () => {
     queryKey: ["users", currentPage, itemsPerPage],
     queryFn: async () => {
       const res = await apiService({ url: `/users` });
-      return res as unknown as TUser[];
+
+      if (res?.data?.success) {
+        setTotalItems(res?.data?.pagination?.total);
+        return res?.data?.data as unknown as TUser[];
+      } else {
+        return [] as unknown as TUser[];
+      }
+      // return res as unknown as TUser[];
       // return [];
     },
   });
